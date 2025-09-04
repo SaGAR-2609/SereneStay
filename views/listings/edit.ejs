@@ -1,0 +1,41 @@
+<% layout("./layouts/boilerplate") %>
+<body>
+    <div class="row">
+        <div class="col-8 offset-2">
+            <br>
+            <h3>Edit the form below</h3>
+            <br>
+            <form method="post" action="/listings/<%= list._id %>?_method=PUT">
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    <input name="listing[title]" value="<%= list.title %>" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea name="listing[description]"  class="form-control"><%= list.description %></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="image" class="form-label">Image</label>
+                    <input name="listing[image]" value="<%= list.image %>" class="form-control">
+                </div>
+                <div class="row">
+                    <div class="mb-3 col-md-4">
+                        <label for="price" class="form-label">Price</label>
+                        <input name="listing[price]" value="<%= list.price %>" type="number" class="form-control">
+                    </div>
+                    <div class="mb-3 col-md-8">
+                        <label for="country" class="form-label">Country</label>
+                        <input name="listing[country]" value="<%= list.country %>" class="form-control">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="location" class="form-label">Location</label>
+                    <input name="listing[location]" value="<%= list.location %>" class="form-control">
+                </div>
+                <br>
+                <button class="btn btn-dark sub-button">Submit !</button>
+            </form>
+            <br>
+        </div>
+    </div>
+</body>
