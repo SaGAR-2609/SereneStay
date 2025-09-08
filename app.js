@@ -5,78 +5,86 @@ const Listing = require("./models/listings");
 const path = require("path");
 const methodoverride = require("method-override");
 const ejsMate = require("ejs-mate");
+const wrapAsync = require("./utils/wrapAsync.js");
+const ExpressError = require("./utils/expressError.js");
 
 const mongo_url = "mongodb://127.0.0.1:27017/wanderer";
 
 main().then((res) => console.log("Connection was successful"))
     .catch((err) => console.log(err));
 
-async function main(){
+async function main() {
     await mongoose.connect(mongo_url);
 };
 
-app.set("view engine" , "ejs");
-app.set("views" , path.join(__dirname , "views"));
-app.use(express.urlencoded( {extended : true}));
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+app.use(express.urlencoded({ extended: true }));
 app.use(methodoverride("_method"));
-app.engine("ejs" , ejsMate);
-app.use(express.static(path.join(__dirname , "/public")));
+app.engine("ejs", ejsMate);
+app.use(express.static(path.join(__dirname, "/public")));
 
 //Checking all the required items working
-app.get("/" , (req , res) => {
+app.get("/", (req, res) => {
     res.send("All working fine till now");
 });
 
 // Home page
-app.get("/listings" , async (req , res) => {
+app.get("/listings", wrapAsync(async (req, res) => {
     const allListings = await Listing.find({});
-    res.render("./listings/index.ejs" , {allListings});
-});
+    res.render("./listings/index.ejs", { allListings });
+}));
 
 //Creating new listing
-app.get("/listings/new" , (req , res) => {
+app.get("/listings/new", (req, res) => {
     res.render("./listings/new.ejs");
 });
 
 //Adding the new listing to the database
-app.post("/listings/new" , async (req , res) => {
+app.post("/listings/new", wrapAsync(async (req, res, next) => {
     // let {title , description , image , price , location , country} = req.body;
     // const newListing = new Listing({
     //     title : title, description : description , image : image , price : price , location : location , country : country
     // });
+
+    if(!req.body.listing){
+        throw new ExpressError(400 , "Send valid data for listing.");
+    }
+
     const newListing = new Listing(req.body.listing);
     await newListing.save();
     res.redirect("/listings");
-})
+
+}));
 
 // Edit Route
-app.get("/listings/:id/edit" , async (req , res) => {
-    let {id} = req.params;
+app.get("/listings/:id/edit",  wrapAsync(async (req, res) => {
+    let { id } = req.params;
     const list = await Listing.findById(id);
-    res.render("./listings/edit.ejs" , {list});
-});
+    res.render("./listings/edit.ejs", { list });
+}));
 
 // Update Route
-app.put("/listings/:id" , async (req , res) => {
-    let {id} = req.params;
-    const list = await Listing.findByIdAndUpdate(id , {...req.body.listing});
+app.put("/listings/:id",  wrapAsync(async (req, res) => {
+    let { id } = req.params;
+    const list = await Listing.findByIdAndUpdate(id, { ...req.body.listing });
     console.log(list);
     res.redirect(`/listings/${id}`);
-})
+}));
 
 // DELETE Route
-app.delete("/listings/:id" , async (req , res) => {
-    let {id} = req.params;
+app.delete("/listings/:id",  wrapAsync(async (req, res) => {
+    let { id } = req.params;
     await Listing.findByIdAndDelete(id);
     res.redirect("/listings");
-});
+}));
 
 // Individual listing page
-app.get("/listings/:id" , async (req , res) => {
-    let {id} = req.params;
+app.get("/listings/:id",  wrapAsync(async (req, res) => {
+    let { id } = req.params;
     const list = await Listing.findById(id);
-    res.render("./listings/show.ejs" , {list});
-});
+    res.render("./listings/show.ejs", { list });
+}));
 
 // app.get("/testListing" , async (req , res) =>{
 //     let sample = new Listing({
@@ -91,6 +99,15 @@ app.get("/listings/:id" , async (req , res) => {
 //     res.send(sample);
 // })
 
-app.listen(8080 , ()=> {
+app.use( (req , res , next) => {
+    next(new ExpressError(404 , "Page not found!!"));
+});
+
+app.use((err, req, res, next) => {
+    let {statusCode = 500 , message = "Something went wrong!"} = err;
+    res.status(statusCode).send(message);
+});
+
+app.listen(8080, () => {
     console.log("App is listening on 8080...");
 });
