@@ -7,6 +7,7 @@ const methodoverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/expressError.js");
+const {listingSchema} = require("./schema.js");
 
 const mongo_url = "mongodb://127.0.0.1:27017/wanderer";
 
@@ -29,8 +30,19 @@ app.get("/", (req, res) => {
     res.send("All working fine till now");
 });
 
+let validateListing = (req , res , next) => {
+    let {error} = listingSchema.validate(req.body);
+    let errMsg = error.details.map((el) => el.message).join(",");
+    if(error){
+        throw new ExpressError(400 , errMsg);
+    }
+    else{
+        next();
+    }
+};
+
 // Home page
-app.get("/listings", wrapAsync(async (req, res) => {
+app.get("/listings", validateListing , wrapAsync(async (req, res) => {
     const allListings = await Listing.find({});
     res.render("./listings/index.ejs", { allListings });
 }));
@@ -47,10 +59,6 @@ app.post("/listings/new", wrapAsync(async (req, res, next) => {
     //     title : title, description : description , image : image , price : price , location : location , country : country
     // });
 
-    if(!req.body.listing){
-        throw new ExpressError(400 , "Send valid data for listing.");
-    }
-
     const newListing = new Listing(req.body.listing);
     await newListing.save();
     res.redirect("/listings");
@@ -65,7 +73,7 @@ app.get("/listings/:id/edit",  wrapAsync(async (req, res) => {
 }));
 
 // Update Route
-app.put("/listings/:id",  wrapAsync(async (req, res) => {
+app.put("/listings/:id", validateListing , wrapAsync(async (req, res) => {
     let { id } = req.params;
     const list = await Listing.findByIdAndUpdate(id, { ...req.body.listing });
     console.log(list);
@@ -105,7 +113,7 @@ app.use( (req , res , next) => {
 
 app.use((err, req, res, next) => {
     let {statusCode = 500 , message = "Something went wrong!"} = err;
-    res.status(statusCode).send(message);
+    res.status(statusCode).render("error.ejs", {message});
 });
 
 app.listen(8080, () => {
