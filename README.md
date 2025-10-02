@@ -11,6 +11,7 @@ SereneStay is a full-stack web application inspired by Airbnb, designed for book
 
 * Browse all available accommodations on a visually appealing listings page
 * View detailed information about each listing including title, description, image, price, location, and country
+* Read the reviews of a particular listing
 * Simple and clean UI for seamless user experience
 * Server-side rendering using EJS for faster load times and better SEO
 * MongoDB integration with Mongoose for flexible and scalable data handling
@@ -29,6 +30,7 @@ SereneStay is a full-stack web application inspired by Airbnb, designed for book
 * Node.js with Express framework
 * EJS templating engine
 * MongoDB as the database, managed via Mongoose
+* Passport for user account management
 
 ---
 
@@ -79,9 +81,8 @@ SereneStay is a full-stack web application inspired by Airbnb, designed for book
 
 ## Usage
 
-* Navigate to the home page to see an overview of all available listings.
+* Navigate to the All Listings page to see an overview of all available listings.
 * Click on any listing card to view its detail page, showcasing all the relevant information.
-* Search or filter functionality may be implemented to streamline your experience (if applicable).
 
 ---
 
@@ -90,19 +91,50 @@ SereneStay is a full-stack web application inspired by Airbnb, designed for book
 ```
 SereneStay/
 ├── app.js                # Main application entry point
+│
+├── middleware.js         # All the middlewares
+│
+├── schema.js             # Schema for Joi
+│
 ├── models/
-│   └── listings.js       # Mongoose schema and model for listings
+│   ├── listings.js       # Mongoose schema and model for listings
+│   ├── reviews.js        # Mongoose schema and model for reviews
+│   └── users.js          # Mongoose schema and model for users
+│
 ├── views/
 │   ├── layouts/
 │   │   └── boilerplate.ejs
+│   │
 │   ├── listings/
+│   │   ├── edit.ejs      # To edit a listing
 │   │   ├── index.ejs     # All Listings page
+│   │   ├── new.ejs       # Creating a new Listing page
 │   │   └── show.ejs      # Listing details page
-│   └── partials/         # Any reusable components
+│   │
+│   ├── includes/
+│   │   ├── flash.ejs     # For flashing a message
+│   │   ├── footer.ejs    # For flashing a message
+│   │   └── navbar.ejs    # For flashing a message
+│   │
+│   ├── users/
+│   │   ├── login.ejs     # For logging in a user
+│   │   └── signup.ejs    # For signing up a user
+│   │
+│   └── error.ejs         # Handling all the errors
+│
 ├── public/               # Static files (CSS, JS, images)
+│
 ├── utils/                # Utility modules and error handlers
+│
 ├── init/                 # Seed data and scripts (e.g., sampleListings)
-│   └── init.js
+│   │   ├── index.js      # For initializing the data
+│   │   └── data.js       # Contains all the listing data
+│   │
+├── routes/               
+│   │   ├── listing.js    # Contains all the routes starting with listing
+│   │   ├── review.js     # Contains all the routes starting with listing/:id/review
+|   |   └── users.js      # Contains all the routes starting with user
+│   
 ├── package.json
 └── README.md
 ```
@@ -114,7 +146,7 @@ SereneStay/
 We welcome contributions! Feel free to:
 
 * Fix bugs or improve performance
-* Add new features like search, filtering, user authentication, etc.
+* Add new features like search, filtering, etc.
 * Enhance styling or usability
 
 **To contribute:**
