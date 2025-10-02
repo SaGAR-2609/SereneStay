@@ -127,15 +127,16 @@ SereneStay/
 ├── utils/                # Utility modules and error handlers
 │
 ├── init/                 # Seed data and scripts (e.g., sampleListings)
-│   │   ├── index.js      # For initializing the data
-│   │   └── data.js       # Contains all the listing data
-│   │
+│   ├── index.js          # For initializing the data
+│   └── data.js           # Contains all the listing data
+│
 ├── routes/               
-│   │   ├── listing.js    # Contains all the routes starting with listing
-│   │   ├── review.js     # Contains all the routes starting with listing/:id/review
-|   |   └── users.js      # Contains all the routes starting with user
+│   ├── listing.js        # Contains all the routes starting with listing
+│   ├── review.js         # Contains all the routes starting with listing/:id/review
+│   └── users.js          # Contains all the routes starting with user
 │   
 ├── package.json
+│
 └── README.md
 ```
 
