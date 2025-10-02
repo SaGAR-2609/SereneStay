@@ -67,7 +67,7 @@ body , .navbar,  .plus-jakarta-sans {
 }
 
 /* Cards */
-.card{
+.listing-card{
     margin-bottom: 2rem;
     border: none !important;
 }
