@@ -60,3 +60,24 @@ module.exports.isAuthor = (async (req , res ,next) => {
     }
     next();
 });
+
+module.exports.geocode = async (req, res, next) => {
+  const locationString = `${req.body.listing.location}, ${req.body.listing.country}`;
+
+  const response = await fetch(
+    `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locationString)}`
+  );
+
+  const data = await response.json();
+
+  if (data.length > 0) {
+    req.geoData = {
+      lat: data[0].lat,
+      lon: data[0].lon
+    };
+  } else {
+    req.geoData = null;
+  }
+  
+  next();
+};

@@ -9,14 +9,8 @@ const listingSchema = new Schema({
     },
     description : String,
     image : {
-        type : String,
-        default: "https://unsplash.com/photos/large-cruise-ship-docked-in-a-harbor-at-dusk-Tp71k99hcBY",
-        set: (v) => {
-            if (!v || v.trim() === "") {
-                return "https://images.unsplash.com/photo-1507525428034-b723cf961d3e";
-            }
-            return v;
-        }
+        url: String,
+        filename: String,
     },
     price : Number,
     location : String,

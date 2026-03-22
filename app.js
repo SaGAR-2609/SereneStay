@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -15,13 +17,15 @@ const userRoutes = require("./routes/users.js");
 const listingRoutes = require("./routes/listing.js");
 const reviewRoutes = require("./routes/review.js");
 
-const mongo_url = "mongodb://127.0.0.1:27017/wanderer";
+// const mongo_url = "mongodb://127.0.0.1:27017/wanderer";
+
+const dbURL = process.env.ATLAS_DB;
 
 main().then((res) => console.log("Connection was successful"))
     .catch((err) => console.log(err));
 
 async function main() {
-    await mongoose.connect(mongo_url);
+    await mongoose.connect(dbURL);
 };
 
 app.set("view engine", "ejs");
@@ -42,9 +46,9 @@ const sessionOptions = {
     }
 };
 //Checking all the required items working
-app.get("/", (req, res) => {
-    res.send("All working fine till now");
-});
+// app.get("/", (req, res) => {
+//     res.send("All working fine till now");
+// });
 
 app.use(session(sessionOptions));
 app.use(flash());
