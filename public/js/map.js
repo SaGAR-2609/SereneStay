@@ -1,6 +1,6 @@
-// import fetch from "node-fetch";
+import fetch from "node-fetch"
 
-let mapOptions = {
+const mapOptions = {
     center : [27.1936 , 77.9013],
     zoom: 15
 }
@@ -20,6 +20,8 @@ async function geocode(location) {
     }
     return null;
 }
+
+console.log(listingLocation);
 
 (async () => {
     const coords = await geocode(listingLocation);
